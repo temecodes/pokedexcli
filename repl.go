@@ -35,8 +35,8 @@ func getCommands() map[string]cliCommand{
 		"map":{
 			name:"map",
 			description: "Tells the name of different areas",
-			callback: commandMap
-		}
+			callback: commandMap,
+		},
 	}
 }
 
