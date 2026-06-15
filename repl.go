@@ -17,7 +17,12 @@ func cleanInput(text string) []string{
 type cliCommand struct{
 	name string
 	description string
-	callback func() error
+	callback func(*config) error
+}
+
+type config struct{
+	nextLoc *string
+	prevLoc *string
 }
 
 func getCommands() map[string]cliCommand{
@@ -37,12 +42,23 @@ func getCommands() map[string]cliCommand{
 			description: "Tells the name of different areas",
 			callback: commandMap,
 		},
+		"next":{
+			name:"next",
+			description: "Gives the next 20 locations",
+			callback: commandMap,
+		},
 	}
 }
 
 
 func startRepl() {
-	
+	startURL := "https://pokeapi.co/api/v2/location-area"
+
+	cfg := &config{
+		nextLoc: &startURL,
+		prevLoc: nil,
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 	gettingCommands:= getCommands()
 
@@ -66,7 +82,7 @@ func startRepl() {
 			continue
 		}	
 
-		err := command.callback()
+		err := command.callback(cfg)
 		if err != nil{
 			fmt.Println(err)
 		}

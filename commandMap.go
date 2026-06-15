@@ -8,17 +8,25 @@ import(
 )
 
 type AreaName struct{
+	Count int `json:"count"`
+	Next *string `json:"next"`
+	Previous *string `json:"previous"`
 	Results []Location `json:"results"`
 }
 
 type Location struct{
 	Name string `json:"name"`
+	Url string `json:"url"`
 }	
 
-func commandMap() error{
+func commandMap(cfg *config) error{
+	
+	if cfg.nextLoc == nil{
+		fmt.Println("You are on the last page")
+		return nil
+	}
 
-	apiURL := "https://pokeapi.co/api/v2/location-area"
-	res, err := http.Get(apiURL)
+	res, err := http.Get(*cfg.nextLoc)
 	if err != nil{
 		return fmt.Errorf("request failed %w", err)
 	}
@@ -40,5 +48,7 @@ func commandMap() error{
 	for _, i := range infoOfInfo{
 		fmt.Println(i.Name)
 	}
+	cfg.nextLoc = info.Next
+	cfg.prevLoc = info.Previous
 	return nil
 }
